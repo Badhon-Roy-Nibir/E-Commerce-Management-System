@@ -24,28 +24,34 @@ export class UsersController {
     return this.usersService.createUser(user);
   }
 
-  @UseGuards(JwtGuard, RolesGuard)
-  @Roles("Admin")
+  @Roles("Admin", "Manager")
   @Get('Get-users')
   getAllUsers(): Promise<object>{
     return this.usersService.getAllUsers();
 
   }
+  @Roles("Admin", "Manager")
   @Get("Get-users/:id")
   getUsersByID(@Param('id') id: number):Promise<Users | string | object>{
     return this.usersService.getUserById(id);
   }
 
-  @UseGuards(JwtGuard, RolesGuard)
   @Roles("Admin", "Customer", "Manager")
   @Patch("Update-user/:id")
   updateUsers(@Param('id', ParseIntPipe) id: number, @Body() user: UpdateUsersDto): Promise<object>{
     return this.usersService.updateUser(id, user);
   }
-  
+
+  @Roles("Admin", "Manager")
   @Delete("delete-user/:id")
   deleteUser(@Param('id', ParseIntPipe) id: number): Promise<object>{
     return this.usersService.deleteUser(id);
+  }
+
+  @Patch("toggleActive/:id")
+  toggleActive(@Param('id', ParseIntPipe) id: number): Promise<object>{
+    return this.usersService.toggleIsActive(id);
+
   }
 
   

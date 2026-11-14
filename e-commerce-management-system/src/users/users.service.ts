@@ -181,6 +181,44 @@ export class UsersService {
         }
 
     }
+    async toggleIsActive(id: number): Promise<object>{
+        try{
+            const user = await this.userRepo.findOne({
+                where: {
+                    userId: id
+                },
+                select: {
+                    userId: true,
+                    name: true,
+                    isActive: true
+                }
+            });
+            if(user){
+                user.isActive = !user.isActive;
+                const updateUser = (await this.userRepo.update(id, user)).affected;
+                if(updateUser != null && updateUser > 0){
+                    return{
+                        message: `User with id ${id} toggled!`,
+                        data: user
+                    }
+
+                }else{
+                    return{
+                        message: `User with id ${id} not toggled!`,
+                    }
+                }
+
+            }else{
+                return{
+                    message: `User with id ${id} not found!`,
+
+                }
+            }
+        }catch{
+            throw new BadRequestException("User not found!");
+        }
+
+    }
 
 
 

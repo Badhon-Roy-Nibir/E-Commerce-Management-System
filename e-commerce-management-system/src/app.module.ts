@@ -6,9 +6,8 @@ import { RolesModule } from './roles/roles.module.js';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AddressModule } from './address/address.module.js';
 import { AuthModule } from './auth/auth.module.js';
-import { BillModule } from './bill/bill.module.js';
 import { ConfigModule, ConfigService } from '@nestjs/config'
-import passport from 'passport';
+import { BillsModule } from './bills/bills.module.js';
 
 @Module({
   imports: [UsersModule, RolesModule,
@@ -28,7 +27,7 @@ import passport from 'passport';
         autoLoadEntities: true,
       })
       
-  }), AddressModule, AuthModule, BillModule],
+  }), AddressModule, AuthModule, BillsModule],
   controllers: [AppController],
   providers: [AppService],
 })
