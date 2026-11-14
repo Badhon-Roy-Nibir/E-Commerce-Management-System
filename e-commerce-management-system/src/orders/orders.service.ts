@@ -87,10 +87,7 @@ async createOrder(order: CreateOrderDto): Promise< Object> {
 
     }catch{
          throw new BadRequestException("Order failed to create");
-
-    }
-
-    
+    }   
 }
 
 
@@ -115,17 +112,113 @@ async getAllOrders(): Promise<Object> {
     }
 }
 
+async getOrderById(id: number): Promise<Object> {
+    try {
+        const order = await this.ordersRepo.findOne({
+            where: {
+                orderId: id
+            },
+            select: {
+                orderId: true,
+                status: true,
+                shippingFee: true,
+                discount: true,
+                subTotal: true,
+                Total: true,
+                address: true,
+                orderItems: {
+                    orderItemId: true
+                }
+            },
+            relations: {
+                orderItems: true
+            }
+        });
+
+        if (!order) {
+            return `Order with ID ${id} not found`;
+        }
+
+        return {
+            message: 'Order retrieved successfully',
+            data: order
+        };
+
+    } catch {
+        throw new BadRequestException('Failed to retrieve order');
+    }
+}
+
 
 
 async PartiallyupdateOrder(id: number,order: PartialUpdateOrderdto): Promise<Object | string> {
     try {
         const or = await this.ordersRepo.findOne({
-            where: {orderId: id}
+            where: { orderId: id }
         });
 
         if (or) {
+            if (order.orderItems !== undefined) {
 
-            const subTotal = Number(or.subTotal);
+                for (const itemData of order.orderItems) {
+                    const item = await this.orderItemsRepo.findOne({
+                        where: {
+                            orderItemId: itemData.orderItemId,
+                            order: {
+                                orderId: id
+                            }
+                        },
+                        relations: {
+                            product: true
+                        }
+                    });
+
+                    if (!item) {
+                        
+                        return `Order item with ID ${itemData.orderItemId} not found in order ${id}`
+                        
+                    }
+
+                    const product = itemData.productId !== undefined
+                        ? await this.productsRepo.findOne({
+                            where: {
+                                productId: itemData.productId
+                            }
+                        })
+                        : item.product;
+
+                    if (!product) {
+                        throw new BadRequestException(
+                            `Product not found`
+                        );
+                    }
+                    const quantity = itemData.quantity !== undefined
+                        ? itemData.quantity
+                        : item.quantity;
+
+                    const unitPrice = itemData.productId !== undefined
+                        ? Number(product.price)
+                        : Number(item.unitPrice);
+
+                    item.product = product;
+                    item.productName = product.name;
+                    item.quantity = quantity;
+                    item.unitPrice = unitPrice;
+                    item.lineTotal = unitPrice * quantity;
+
+                    await this.orderItemsRepo.save(item);
+                }
+            }
+
+            const allOrderItems = await this.orderItemsRepo.find({
+                where: {
+                    order: {
+                        orderId: id
+                    }
+                }
+            });
+
+            const subTotal = allOrderItems.reduce((sum, item) => sum + Number(item.lineTotal),0 );
 
             const shippingFee = order.shippingFee !== undefined
                 ? Number(order.shippingFee)
@@ -137,15 +230,26 @@ async PartiallyupdateOrder(id: number,order: PartialUpdateOrderdto): Promise<Obj
 
             const total = subTotal + shippingFee - discount;
 
-            const updateData = {...(order.shippingFee !== undefined && {shippingFee: shippingFee}),
-                ...(order.discount !== undefined && {discount: discount
+            const updateData = {
+                ...(order.shippingFee !== undefined && {
+                    shippingFee: shippingFee
                 }),
-                ...(order.address !== undefined && {address: order.address
+
+                ...(order.discount !== undefined && {
+                    discount: discount
                 }),
+
+                ...(order.address !== undefined && {
+                    address: order.address
+                }),
+
+                subTotal: subTotal,
                 Total: total
             };
 
-            const res = (await this.ordersRepo.update(id,updateData)).affected;
+            const res = (
+                await this.ordersRepo.update(id, updateData)
+            ).affected;
 
             if (res != null && res > 0) {
 
@@ -173,17 +277,43 @@ async PartiallyupdateOrder(id: number,order: PartialUpdateOrderdto): Promise<Obj
             return `Order with ID ${id} not found`;
         }
 
-    } catch {
-        throw new BadRequestException(
-            `Order with ID ${id} failed to update`
-        );
+    } catch (error) {
+
+        throw new BadRequestException(`Order with ID ${id} failed to update`);
     }
 }
 
+
+async deleteOrder(id: number): Promise<Object | string> {
+    try {
+        const or = await this.ordersRepo.findOne({
+            where: {
+                orderId: id
+            }
+        });
+
+        if (or) {
+            const res = (await this.ordersRepo.delete(id)).affected;
+            if (res != null && res > 0) {
+                return {
+                    message: `Order with ID ${id} deleted successfully`
+                };
+
+            } else {
+                return `Order with ID ${id} failed to delete`;
+            }
+
+        } else {
+            return `Order with ID ${id} not found`;
+        }
+
+    } catch {
+        throw new BadRequestException(`Order with ID ${id} failed to delete`);
+    }
+}
 
 
 }
 
 
     
-

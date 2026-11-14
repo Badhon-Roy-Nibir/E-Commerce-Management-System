@@ -23,20 +23,21 @@ export class OrderItems {
     lineTotal: number;
 
 
-  @ManyToOne(() => Products, (product) => product.orderItems, {
-    nullable: false,
-    onDelete: 'CASCADE',    
+    @ManyToOne(() => Products, (product) => product.orderItems, {
+      nullable: false,
+      onDelete: 'RESTRICT',
     })
-  @JoinColumn({ name: 'productId' })
-  product: Relation<Products> ;
+     
+    @JoinColumn({ name: 'productId' })
+    product: Relation<Products> ;
+ 
 
-
-   @ManyToOne(() => Orders, (order) => order.orderItems, {
+      @ManyToOne(() => Orders, (order) => order.orderItems, {
         nullable: false,
         onDelete: 'CASCADE'
-    })
-    @JoinColumn({ name: 'orderId' })
-    order: Relation<Orders>;  
+      })
+      @JoinColumn({ name: 'orderId' })
+      order: Relation<Orders>;  
 
     
 }

@@ -71,6 +71,45 @@ async getAllOrderItems(): Promise<Object> {
 }
 
 
+async getOrderItemById(id: number): Promise<Object> {
+    try {
+
+        const orderItem = await this.orderItemsRepo.findOne({
+            where: {
+                orderItemId: id
+            },
+            select: {
+                orderItemId: true,
+                productName: true,
+                quantity: true,
+                unitPrice: true,
+                lineTotal: true,
+                order: {
+                    orderId: true
+                }
+            },
+            relations: {
+                order: true
+            }
+        });
+
+        if (!orderItem) {
+            return `Order Item with ID ${id} not found`;
+        }
+
+        return {
+            message: `Order Item with ID ${id} retrieved successfully`,
+            data: orderItem
+        };
+
+    } catch {
+        throw new BadRequestException(
+            'Failed to retrieve order item'
+        );
+    }
+}
+
+
 
 async updateOrderItem(id: number,item: PartialOrderItemDto): Promise<Object | string> {
 

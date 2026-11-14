@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Products } from './entities/products.entity.js';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { CreateProductDto } from './dtos/create-product.dto.js';
 import { PartialUpdateProductdto } from './dtos/partial-update-product.dto.js';
 import { UpdateProductDto } from './dtos/update-product.dto.js';
@@ -26,7 +26,14 @@ export class ProductsService {
 
      async findAllProducts():Promise<Object>{
         try{
-            const pro = await this.productsRepo.find();
+            const pro = await this.productsRepo.find({
+                select:{
+                    productId:true,
+                    name:true,
+                    price:true,
+                    stockQuantity:true,
+                }
+            });
         return{
             message: 'Products retrieved successfully',
             count: pro.length,
@@ -54,6 +61,29 @@ export class ProductsService {
             throw new BadRequestException(`Product with ${id} is not found`)
         }
     }
+
+    async searchProductByName(name: string): Promise<Object | string> {
+    try {
+        const pro = await this.productsRepo.find({
+            where: {
+                name: Like(`%${name}%`)
+            }
+        });
+
+        if (pro.length > 0) {
+            return {
+                message: `Products matching "${name}" retrieved successfully`,
+                count: pro.length,
+                data: pro
+            };
+        } else {
+            return `No products found with name "${name}"`;
+        }
+
+    } catch {
+        throw new BadRequestException(`Failed to search products with name "${name}"`);
+    }
+}
 
     async updateProduct(id: number,product:PartialUpdateProductdto): Promise<Object | string> {
     try {
@@ -126,6 +156,8 @@ async deleteproductByIdSoft(id: number): Promise<string> {
         throw new BadRequestException(`Product with ID ${id} failed to delete`);
     }
 }
+
+
 
 
 

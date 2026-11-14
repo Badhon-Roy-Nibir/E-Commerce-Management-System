@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Put, Query } from '@nestjs/common';
 import { ProductsService } from './products.service.js';
 import { CreateProductDto } from './dtos/create-product.dto.js';
 import { Products } from './entities/products.entity.js';
@@ -9,19 +9,24 @@ import { UpdateProductDto } from './dtos/update-product.dto.js';
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
   
-  @Post()
+  @Post('create-product')
   async createProduct(@Body() product: CreateProductDto): Promise<Object>{
     return await this.productsService.createProduct(product);
   }
 
-  @Get()
+  @Get('all-product')
   async findProducts(){
     return await this.productsService.findAllProducts();
   }
 
-   @Get(":id")
+   @Get('findOne/:id')
   async findOneProduct(@Param('id') id: number): Promise<Products | string> {
     return await this.productsService.findOneProduct(id);
+  }
+
+  @Get('searchByName')
+  async searchProductByName(@Query('name') name: string): Promise<Object | string> {
+    return await this.productsService.searchProductByName(name);
   }
 
   @Patch(':id')
@@ -38,5 +43,7 @@ export class ProductsController {
   async deleteProductByIdSoft(@Param('id', ParseIntPipe) id: number): Promise<string> {
     return await this.productsService.deleteproductByIdSoft(id);
   }
+
+  
   
 }

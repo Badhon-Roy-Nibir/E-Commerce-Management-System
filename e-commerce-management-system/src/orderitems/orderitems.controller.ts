@@ -17,6 +17,11 @@ export class OrderitemsController {
      return await this.orderitemsService.getAllOrderItems();
   } 
 
+  @Get(':id')
+  async getOrderItemById(@Param('id', ParseIntPipe) id: number): Promise<Object> {
+    return await this.orderitemsService.getOrderItemById(id);
+  }
+
    @Patch(':id')
    async updateOrderItem(@Param('id', ParseIntPipe) id: number,
                          @Body() item: PartialOrderItemDto): Promise<Object | string> {
