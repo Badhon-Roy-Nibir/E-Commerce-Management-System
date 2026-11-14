@@ -12,8 +12,18 @@ export class RolesService {
 
     async createRoles(roles: CreateRolesDto): Promise<object>{
         try{
+            const check = await this.rolesRepo.findOne({
+                where: {
+                    name: roles.name
+                }
+            })
+            if(check){
+                return {
+                    message: `Role with name: ${check.name} already exists`
+                }
+            }
             const newRole = await this.rolesRepo.create(roles);
-            this.rolesRepo.save(newRole);
+            await this.rolesRepo.save(newRole);
             return {
                 message: "Role Created!",
                 data: newRole,
@@ -98,7 +108,7 @@ export class RolesService {
                 where: {roleId: id}
             })
             if(role){
-                const res = (await this.rolesRepo.softDelete(id)).affected;
+                const res = (await this.rolesRepo.delete(id)).affected;
                 if(res != null && res > 0){
                     return {
                         message: `Role with id ${id} deleted!`

@@ -6,6 +6,8 @@ import { CreateUserDto } from './dtos/create-users.dto.js';
 import { Roles } from '../roles/entities/roles.entity.js';
 import { NotFoundError } from 'rxjs';
 import { UpdateUsersDto } from './dtos/update-users.dto.js';
+import * as bcrypt from 'bcrypt';
+import { use } from 'passport';
 
 @Injectable()
 export class UsersService {
@@ -27,6 +29,8 @@ export class UsersService {
                     message: "Role doesnot exist"
                 }
             }
+            const hasPass = await bcrypt.hash(user.password,10);
+            user.password = hasPass;
             const newUser = await this.userRepo.create({
                 name: user.name,
                 email: user.email,
@@ -38,7 +42,8 @@ export class UsersService {
             this.userRepo.save(newUser);
             if(newUser){
                 return {
-                    message: "New User Created!"
+                    message: "New User Created!",
+                    data: newUser
                 }
             }else{
                 return {
@@ -62,11 +67,19 @@ export class UsersService {
                     isActive: true,
                     role: {
                         name: true
+                    },
+                    address: {
+                        city: true,
+                        country: true,
+                        line1: true,
+                        phone: true,
+                        isDefault: true
                     }
 
                 },
                 relations:{
-                    role: true
+                    role: true,
+                    address: true
                 }
             });
             if(user){
@@ -76,7 +89,8 @@ export class UsersService {
                         userId: user.userId,
                         name: user.name,
                         iaActive: user.isActive,
-                        roleName: user.role?.name
+                        roleName: user.role?.name,
+                        address: user.address,
                     }))
                 }
             }else{
@@ -87,6 +101,27 @@ export class UsersService {
         }catch{
             throw new BadRequestException("No users!");
         }
+    }
+    async getUserById(id: number): Promise<Users | string>{
+        try{
+            const user = await this.userRepo.findOne({
+                where: {
+                    userId: id
+                },
+                relations: {
+                    role: true,
+                    address: true
+                }
+            });
+            if(user){
+                return user;
+            }else{
+                return `User with id ${id} not found!`;
+            }
+        }catch{
+            throw new BadRequestException("User not found!");
+        }
+
     }
     async updateUser(id: number, user: UpdateUsersDto): Promise<object>{
         try{

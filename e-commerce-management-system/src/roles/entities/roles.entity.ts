@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Users } from "../../users/entities/users.entity.js";
 import type { Relation } from "typeorm";
 
@@ -10,7 +10,8 @@ export class Roles{
 
     @Column({
         type: "varchar",
-        length: 8
+        length: 8,
+        unique: true
     })
     name: string;
 
@@ -19,8 +20,7 @@ export class Roles{
     })
     description: string;
 
-    @OneToOne(() => Users, (user) => user.role)
-    @JoinColumn()
+    @OneToMany(() => Users, (user) => user.role)
     user: Relation<Users>
 
     @CreateDateColumn()

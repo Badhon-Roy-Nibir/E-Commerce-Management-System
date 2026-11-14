@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
-import { CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Users } from "../../users/entities/users.entity.js";
 import type { Relation } from 'typeorm';
 
@@ -9,33 +9,30 @@ export class Address{
     @PrimaryGeneratedColumn()
     addressId: number;
 
-    @IsString({
-        message: "City must be string"
-    })
-    @IsNotEmpty({
-        message: "City cannot be empty",
+    @Column({
+        type: "varchar"
     })
     city: string;
 
-    @IsString({
-        message: "Country must be string"
-    })
-    @IsNotEmpty({
-        message: "Country cannot be empty",
+    @Column({
+        type: "varchar"
     })
     country: string;
 
-    @IsNumber()
-    @IsNotEmpty({
-        message: "Phone number cannot be empty",
+    @Column({
+        type: 'varchar'
     })
-    phone: number; 
+    phone: string; 
 
-    @IsOptional()
-    @IsString()
+    @Column({
+        type: "varchar",
+        nullable: true
+    })
     line1: string;
 
-    @IsOptional()
+    @Column({
+        type: 'boolean'
+    })
     isDefault: boolean;
 
     @ManyToOne(()=>Users, (user)=>user.address)
