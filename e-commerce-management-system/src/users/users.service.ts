@@ -51,7 +51,7 @@ export class UsersService {
                 role: role
             });
             if(newUser){
-                this.userRepo.save(newUser);
+                await this.userRepo.save(newUser);
                 const emailUser = {
                     name: newUser.name,
                     email: newUser.email,
@@ -140,6 +140,28 @@ export class UsersService {
         }
 
     }
+    async getUserByEmail(email: string): Promise<Users | string>{
+        try{
+            const user = await this.userRepo.findOne({
+                where: {
+                    email: email
+                },
+                relations: {
+                    role: true,
+                    address: true
+                }
+            });
+            if(user){
+                return user;
+            }else{
+                return `User with id ${email} not found!`;
+            }
+        }catch{
+            throw new BadRequestException("User not found!");
+        }
+
+    }
+    
     async updateUser(id: number, user: UpdateUsersDto): Promise<object>{
         try{
 

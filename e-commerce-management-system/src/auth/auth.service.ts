@@ -17,11 +17,7 @@ export class AuthService {
 
     async registerUser(registerUser: RegisterUserDto): Promise<object>{
         try{
-            const pass = registerUser.password;
-            const hasPass = await bcrypt.hash(pass,10);
-            registerUser.password = hasPass;
-
-            let createUser: CreateUserDto = {
+            const createUser: CreateUserDto = {
                 ...registerUser
             }
             return this.usersService.createUser(createUser);
@@ -32,7 +28,7 @@ export class AuthService {
     }
     async loginUser(login: LoginUserDto): Promise<string>{
         try{
-            const user = await this.usersService.getUserById(login.id);
+            const user = await this.usersService.getUserByEmail(login.email);
             if(user != null && typeof user != "string"){
                 const matchPass = await bcrypt.compare(login.password, user.password);
                 if(matchPass){
@@ -47,7 +43,7 @@ export class AuthService {
                     return `PassWord not matched!`
                 }
             }else{
-                return `User with id ${login.id} not found`;
+                return `User with id ${login.email} not found`;
             }
 
         }catch(error){
