@@ -8,6 +8,7 @@ import { AddressModule } from './address/address.module.js';
 import { AuthModule } from './auth/auth.module.js';
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { BillsModule } from './bills/bills.module.js';
+import { MailerModule } from './mailer/mailer.module.js';
 
 @Module({
   imports: [UsersModule, RolesModule,
@@ -27,7 +28,7 @@ import { BillsModule } from './bills/bills.module.js';
         autoLoadEntities: true,
       })
       
-  }), AddressModule, AuthModule, BillsModule],
+  }), AddressModule, AuthModule, BillsModule, MailerModule],
   controllers: [AppController],
   providers: [AppService],
 })

@@ -19,7 +19,8 @@ export class Users{
 
     @Column({
         type: "varchar",
-        nullable: false
+        nullable: false,
+        unique: true
     })
     email: string;
 

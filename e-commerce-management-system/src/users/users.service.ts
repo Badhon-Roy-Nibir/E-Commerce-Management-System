@@ -8,12 +8,13 @@ import { NotFoundError } from 'rxjs';
 import { UpdateUsersDto } from './dtos/update-users.dto.js';
 import * as bcrypt from 'bcrypt';
 import { use } from 'passport';
-
+import { MailerService } from '../mailer/mailer.service.js';
 @Injectable()
 export class UsersService {
 
     constructor(@InjectRepository(Users) private readonly userRepo: Repository<Users>, 
-                @InjectRepository(Roles) private readonly roleRepo: Repository<Roles>)
+                @InjectRepository(Roles) private readonly roleRepo: Repository<Roles>,
+                private readonly mailerService: MailerService)
                 {}
 
     async createUser(user: CreateUserDto): Promise<object>{
@@ -21,7 +22,7 @@ export class UsersService {
             
             const role = await this.roleRepo.findOne({
                 where: {
-                    roleId: user.roleId
+                    roleId: user.roleId,
                 }
             });
             if(!role){
@@ -29,6 +30,17 @@ export class UsersService {
                     message: "Role doesnot exist"
                 }
             }
+            const email = await this.userRepo.findOne({
+                where: {
+                    email: user.email
+                }
+            });
+            if(email){
+                return {
+                    message: `${user.email} already exisits with anothwer user`
+                }
+            }
+
             const hasPass = await bcrypt.hash(user.password,10);
             user.password = hasPass;
             const newUser = await this.userRepo.create({
@@ -38,9 +50,14 @@ export class UsersService {
                 isActive: user.isActive,
                 role: role
             });
-
-            this.userRepo.save(newUser);
             if(newUser){
+                this.userRepo.save(newUser);
+                const emailUser = {
+                    name: newUser.name,
+                    email: newUser.email,
+                }
+                await this.mailerService.sendWelcomeEmail(emailUser.email,emailUser.name);
+
                 return {
                     message: "New User Created!",
                     data: newUser
