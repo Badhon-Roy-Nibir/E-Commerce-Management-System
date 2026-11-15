@@ -4,7 +4,10 @@ import { CreateProductDto } from './dtos/create-product.dto.js';
 import { Products } from './entities/products.entity.js';
 import { PartialUpdateProductdto } from './dtos/partial-update-product.dto.js';
 import { UpdateProductDto } from './dtos/update-product.dto.js';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Products')
+@ApiBearerAuth()
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}

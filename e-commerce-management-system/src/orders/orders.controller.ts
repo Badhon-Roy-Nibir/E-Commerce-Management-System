@@ -3,7 +3,11 @@ import { OrdersService } from './orders.service.js';
 import { CreateOrderDto } from './dtos/create-order.dto.js';
 import { Orders } from './entities/order.entity.js';
 import { PartialUpdateOrderdto } from './dtos/partial-update-order.dto.js';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+
+@ApiTags('Orders')
+@ApiBearerAuth()
 @Controller('orders')
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}

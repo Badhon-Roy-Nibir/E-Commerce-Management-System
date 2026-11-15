@@ -2,7 +2,11 @@ import { Body, Controller, Post, Get, Patch, Param, ParseIntPipe } from '@nestjs
 import { OrderitemsService } from './orderitems.service.js';
 import { CreateOrderItemDto } from './dtos/create-orderitem.dto.js';
 import { PartialOrderItemDto } from './dtos/partial-update-orderitem.dto.js';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+
+@ApiTags('OrderItems')
+@ApiBearerAuth()
 @Controller('orderitems')
 export class OrderitemsController {
   constructor(private readonly orderitemsService: OrderitemsService) {}
@@ -26,7 +30,7 @@ export class OrderitemsController {
    async updateOrderItem(@Param('id', ParseIntPipe) id: number,
                          @Body() item: PartialOrderItemDto): Promise<Object | string> {
 
-        return await this.orderitemsService.updateOrderItem(id, item);
+        return await this.orderitemsService.partiallyupdateOrderItem(id, item);
     }
    
 

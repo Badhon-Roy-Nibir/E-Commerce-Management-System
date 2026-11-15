@@ -41,14 +41,20 @@ export class OrderitemsService {
 
         return {
             message: 'Order item created successfully',
-            data: savedItem
+            data: {
+                orderItemId: savedItem.orderItemId,
+                orderId: savedItem.order.orderId,
+                productName: savedItem.productName,
+                quantity: savedItem.quantity,
+                unitPrice: savedItem.unitPrice,
+                lineTotal: savedItem.lineTotal
+            }
         };
 
     } catch {
         throw new BadRequestException('Order item failed to create');
     }
 }
-
 
 async getAllOrderItems(): Promise<Object> {
     try {
@@ -57,6 +63,15 @@ async getAllOrderItems(): Promise<Object> {
             relations: {
                 product: true,
                 order: true
+            },
+            select:{
+                order:{
+                    orderId:true
+                },
+                product:{
+                    productId:true,
+                    name:true,
+                }
             }
         });
 
@@ -79,40 +94,33 @@ async getOrderItemById(id: number): Promise<Object> {
                 orderItemId: id
             },
             select: {
-                orderItemId: true,
-                productName: true,
-                quantity: true,
-                unitPrice: true,
-                lineTotal: true,
                 order: {
                     orderId: true
+                },
+                product:{
+                    productId:true,
                 }
             },
             relations: {
-                order: true
+                order: true,
+                product:true,
             }
         });
 
         if (!orderItem) {
             return `Order Item with ID ${id} not found`;
         }
-
         return {
             message: `Order Item with ID ${id} retrieved successfully`,
             data: orderItem
         };
 
     } catch {
-        throw new BadRequestException(
-            'Failed to retrieve order item'
-        );
+        throw new BadRequestException('Failed to retrieve order item');
     }
 }
 
-
-
-async updateOrderItem(id: number,item: PartialOrderItemDto): Promise<Object | string> {
-
+async partiallyupdateOrderItem(id: number,item: PartialOrderItemDto): Promise<Object | string> {
     try {
         const oldItem = await this.orderItemsRepo.findOne({
             where: {
@@ -121,12 +129,16 @@ async updateOrderItem(id: number,item: PartialOrderItemDto): Promise<Object | st
             relations: {
                 order: true,
                 product: true
-            }
+            },
         });
 
         if (oldItem) {
 
-            let product = oldItem.product;
+            let product = await this.productsRepo.findOne({
+                where: {
+                    productId: oldItem.product.productId
+                },               
+            });
 
             if (item.productId !== undefined) {
 
@@ -142,10 +154,11 @@ async updateOrderItem(id: number,item: PartialOrderItemDto): Promise<Object | st
 
                 product = newProduct;
             }
+            if (!product) {
+                return 'Product not found';
+}
 
-            const quantity = item.quantity !== undefined
-                ? item.quantity
-                : oldItem.quantity;
+            const quantity = item.quantity !== undefined ? item.quantity : oldItem.quantity;
 
             const lineTotal = Number(product.price) * quantity;
 
@@ -182,7 +195,15 @@ async updateOrderItem(id: number,item: PartialOrderItemDto): Promise<Object | st
 
             return {
                 message: `Order item with ID ${id} updated successfully`,
-                data: savedItem
+                data: {
+                    orderItemId: savedItem.orderItemId,
+                    productName: savedItem.productName,
+                    quantity: savedItem.quantity,
+                    unitPrice: savedItem.unitPrice,
+                    lineTotal: savedItem.lineTotal,
+                    productId: savedItem.product.productId,
+                    orderId: savedItem.order.orderId,
+                }
             };
 
         } else {

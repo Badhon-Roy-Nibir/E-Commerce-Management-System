@@ -20,7 +20,6 @@ async createOrder(order: CreateOrderDto): Promise< Object> {
         let subTotal = 0;
 
     const orderItems: OrderItems[] = [];
-
     for (const item of order.orderItems) {
 
         const product = await this.productsRepo.findOne({
@@ -72,6 +71,14 @@ async createOrder(order: CreateOrderDto): Promise< Object> {
     const result = await this.ordersRepo.findOne({
         where: {
             orderId: savedOrder.orderId
+        },select:{
+            orderItems:{
+                orderItemId:true,
+                quantity:true,
+                product:{
+                    name:true,
+                }
+            }
         },
         relations: {
             orderItems: {
@@ -93,12 +100,19 @@ async createOrder(order: CreateOrderDto): Promise< Object> {
 
 async getAllOrders(): Promise<Object> {
     try {
-
         const allOrders = await this.ordersRepo.find({
             relations: {
                 orderItems: {
                     product: true
                 }
+            },select:{
+                orderItems:{
+                    orderItemId:true,
+                    product:{
+                        name:true,
+                    }
+                },
+                
             }
         });
 
@@ -149,8 +163,6 @@ async getOrderById(id: number): Promise<Object> {
     }
 }
 
-
-
 async PartiallyupdateOrder(id: number,order: PartialUpdateOrderdto): Promise<Object | string> {
     try {
         const or = await this.ordersRepo.findOne({
@@ -159,7 +171,6 @@ async PartiallyupdateOrder(id: number,order: PartialUpdateOrderdto): Promise<Obj
 
         if (or) {
             if (order.orderItems !== undefined) {
-
                 for (const itemData of order.orderItems) {
                     const item = await this.orderItemsRepo.findOne({
                         where: {
@@ -172,33 +183,21 @@ async PartiallyupdateOrder(id: number,order: PartialUpdateOrderdto): Promise<Obj
                             product: true
                         }
                     });
-
-                    if (!item) {
-                        
-                        return `Order item with ID ${itemData.orderItemId} not found in order ${id}`
-                        
+                    if (!item) {                       
+                        return `Order item with ID ${itemData.orderItemId} not found in order ${id}`;                       
                     }
 
-                    const product = itemData.productId !== undefined
-                        ? await this.productsRepo.findOne({
+                    const product = itemData.productId !== undefined ? await this.productsRepo.findOne({
                             where: {
                                 productId: itemData.productId
                             }
-                        })
-                        : item.product;
+                        }): item.product;
 
                     if (!product) {
-                        throw new BadRequestException(
-                            `Product not found`
-                        );
+                        return `Product not found`;
                     }
-                    const quantity = itemData.quantity !== undefined
-                        ? itemData.quantity
-                        : item.quantity;
-
-                    const unitPrice = itemData.productId !== undefined
-                        ? Number(product.price)
-                        : Number(item.unitPrice);
+                    const quantity = itemData.quantity !== undefined ? itemData.quantity : item.quantity;
+                    const unitPrice = itemData.productId !== undefined ? Number(product.price) : Number(item.unitPrice);
 
                     item.product = product;
                     item.productName = product.name;
@@ -209,7 +208,6 @@ async PartiallyupdateOrder(id: number,order: PartialUpdateOrderdto): Promise<Obj
                     await this.orderItemsRepo.save(item);
                 }
             }
-
             const allOrderItems = await this.orderItemsRepo.find({
                 where: {
                     order: {
@@ -219,43 +217,33 @@ async PartiallyupdateOrder(id: number,order: PartialUpdateOrderdto): Promise<Obj
             });
 
             const subTotal = allOrderItems.reduce((sum, item) => sum + Number(item.lineTotal),0 );
-
-            const shippingFee = order.shippingFee !== undefined
-                ? Number(order.shippingFee)
-                : Number(or.shippingFee);
-
-            const discount = order.discount !== undefined
-                ? Number(order.discount)
-                : Number(or.discount);
+            const shippingFee = order.shippingFee !== undefined ? Number(order.shippingFee) : Number(or.shippingFee);
+            const discount = order.discount !== undefined ? Number(order.discount) : Number(or.discount);
 
             const total = subTotal + shippingFee - discount;
 
             const updateData = {
-                ...(order.shippingFee !== undefined && {
-                    shippingFee: shippingFee
-                }),
-
-                ...(order.discount !== undefined && {
-                    discount: discount
-                }),
-
-                ...(order.address !== undefined && {
-                    address: order.address
-                }),
+                ...(order.shippingFee !== undefined && {shippingFee: shippingFee}),
+                ...(order.discount !== undefined && {discount: discount}),
+                ...(order.address !== undefined && { address: order.address}),
 
                 subTotal: subTotal,
                 Total: total
             };
 
-            const res = (
-                await this.ordersRepo.update(id, updateData)
-            ).affected;
-
+            const res = (await this.ordersRepo.update(id, updateData)).affected;
             if (res != null && res > 0) {
-
                 const updatedOrder = await this.ordersRepo.findOne({
                     where: {
                         orderId: id
+                    },select:{
+                        orderItems:{
+                            orderItemId:true,
+                            quantity:true,
+                            product:{
+                                name:true,
+                            }
+                        }
                     },
                     relations: {
                         orderItems: {
@@ -263,22 +251,18 @@ async PartiallyupdateOrder(id: number,order: PartialUpdateOrderdto): Promise<Obj
                         }
                     }
                 });
-
                 return {
                     message: `Order with ID ${id} updated successfully`,
                     data: updatedOrder!
                 };
-
             } else {
                 return `Order with ID ${id} failed to update`;
             }
-
         } else {
             return `Order with ID ${id} not found`;
         }
 
     } catch (error) {
-
         throw new BadRequestException(`Order with ID ${id} failed to update`);
     }
 }
