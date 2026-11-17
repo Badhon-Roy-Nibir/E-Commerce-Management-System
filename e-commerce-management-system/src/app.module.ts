@@ -9,6 +9,9 @@ import { AuthModule } from './auth/auth.module.js';
 import { ConfigModule, ConfigService } from '@nestjs/config'
 import { BillsModule } from './bills/bills.module.js';
 import { MailerModule } from './mailer/mailer.module.js';
+import { ProductsModule } from './products/products.module.js';
+import { OrderitemsModule } from './orderitems/orderitems.module.js';
+import { OrdersModule } from './orders/orders.module.js';
 
 @Module({
   imports: [UsersModule, RolesModule,
@@ -28,7 +31,7 @@ import { MailerModule } from './mailer/mailer.module.js';
         autoLoadEntities: true,
       })
       
-  }), AddressModule, AuthModule, BillsModule, MailerModule],
+  }), AddressModule, AuthModule, BillsModule, MailerModule, ProductsModule, OrderitemsModule, OrdersModule],
   controllers: [AppController],
   providers: [AppService],
 })
