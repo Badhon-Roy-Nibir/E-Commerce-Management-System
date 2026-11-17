@@ -3,6 +3,7 @@ import { OrderitemsService } from './orderitems.service.js';
 import { CreateOrderItemDto } from './dtos/create-orderitem.dto.js';
 import { PartialOrderItemDto } from './dtos/partial-update-orderitem.dto.js';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Roles } from '../auth/roles/roles/roles.decorator.js';
 
 
 @ApiTags('OrderItems')
