@@ -1,0 +1,104 @@
+{
+  "info": {
+    "name": "E-Commerce - Cart API",
+    "description": "Postman requests for the Cart and CartItems module. Set cartId, itemId and productId after creating or checking records in your database.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "cartId", "value": "1" },
+    { "key": "itemId", "value": "1" },
+    { "key": "userId", "value": "1" },
+    { "key": "productId", "value": "1" }
+  ],
+  "item": [
+    {
+      "name": "Cart CRUD",
+      "item": [
+        {
+          "name": "Create cart",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"userId\": {{userId}}\n}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/carts"
+          }
+        },
+        {
+          "name": "List carts (pagination)",
+          "request": { "method": "GET", "url": "{{baseUrl}}/carts?page=1&limit=10" }
+        },
+        {
+          "name": "Get cart with subtotal",
+          "request": { "method": "GET", "url": "{{baseUrl}}/carts/{{cartId}}" }
+        },
+        {
+          "name": "Delete cart",
+          "request": { "method": "DELETE", "url": "{{baseUrl}}/carts/{{cartId}}" }
+        }
+      ]
+    },
+    {
+      "name": "Cart Items CRUD",
+      "item": [
+        {
+          "name": "Add product to cart",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"productId\": {{productId}},\n  \"quantity\": 2\n}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/carts/{{cartId}}/items"
+          }
+        },
+        {
+          "name": "List cart items (pagination)",
+          "request": { "method": "GET", "url": "{{baseUrl}}/carts/{{cartId}}/items?page=1&limit=10" }
+        },
+        {
+          "name": "Update cart item quantity",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"quantity\": 3\n}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/carts/{{cartId}}/items/{{itemId}}"
+          }
+        },
+        {
+          "name": "Remove one cart item",
+          "request": { "method": "DELETE", "url": "{{baseUrl}}/carts/{{cartId}}/items/{{itemId}}" }
+        },
+        {
+          "name": "Clear cart but keep cart record",
+          "request": { "method": "DELETE", "url": "{{baseUrl}}/carts/{{cartId}}/items" }
+        }
+      ]
+    },
+    {
+      "name": "Validation and error checks",
+      "item": [
+        {
+          "name": "Invalid quantity - expect 400",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"productId\": {{productId}},\n  \"quantity\": 0\n}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/carts/{{cartId}}/items"
+          }
+        },
+        {
+          "name": "Missing cart - expect 404",
+          "request": { "method": "GET", "url": "{{baseUrl}}/carts/999999" }
+        },
+        {
+          "name": "Duplicate user cart - expect 409",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"userId\": {{userId}}\n}", "options": { "raw": { "language": "json" } } },
+            "url": "{{baseUrl}}/carts"
+          }
+        }
+      ]
+    }
+  ]
+}
