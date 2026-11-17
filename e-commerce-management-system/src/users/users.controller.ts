@@ -17,7 +17,6 @@ export class UsersController {
 
 
 
-  @UseGuards(JwtGuard, RolesGuard)
   @Roles("Admin")
   @Post('create-user')
   createUser(@Body()user: CreateUserDto): Promise<object>{

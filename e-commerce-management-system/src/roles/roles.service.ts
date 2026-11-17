@@ -81,7 +81,7 @@ export class RolesService {
                 where: {roleId: id}
             })
             if(updateRole){
-                const res = (await this.rolesRepo.update(id, updateRole)).affected;
+                const res = (await this.rolesRepo.update(id, role)).affected;
                 if(res != null && res > 0){
                     return{
                         message: `Role with id ${id} is updated!`

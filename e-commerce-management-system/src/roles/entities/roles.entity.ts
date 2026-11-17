@@ -1,6 +1,7 @@
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Users } from "../../users/entities/users.entity.js";
 import type { Relation } from "typeorm";
+import { maxLength } from 'class-validator';
 
 @Entity("Roles")
 export class Roles{
@@ -10,8 +11,8 @@ export class Roles{
 
     @Column({
         type: "varchar",
-        length: 8,
-        unique: true
+        length: 20,
+        unique: true,
     })
     name: string;
 

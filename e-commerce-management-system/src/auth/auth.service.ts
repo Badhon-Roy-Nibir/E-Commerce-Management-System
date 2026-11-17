@@ -43,7 +43,7 @@ export class AuthService {
                     return `PassWord not matched!`
                 }
             }else{
-                return `User with id ${login.email} not found`;
+                return `User with email ${login.email} not found`;
             }
 
         }catch(error){
