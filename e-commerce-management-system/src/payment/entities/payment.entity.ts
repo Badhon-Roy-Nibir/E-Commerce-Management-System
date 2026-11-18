@@ -5,7 +5,11 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
+import { Bills } from '../../bills/entities/bills.entity.js';
+import type { Relation } from 'typeorm';
 
 @Entity('payments')
 export class Payment {
@@ -30,8 +34,16 @@ export class Payment {
     nullable: true })
     paidDate?: Date;
 
-  @Column()
-   billId: number;
+  @ManyToOne(() => Bills,(bill) => bill.payment,
+        {
+            nullable: false,
+            onDelete: 'CASCADE'
+        }
+    )
+    @JoinColumn({
+        name: 'billId'
+    })
+    bill: Relation<Bills>;
 
   @CreateDateColumn()
    createdDate: Date;

@@ -1,6 +1,7 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Orders } from "../../orders/entities/order.entity.js";
 import type { Relation } from 'typeorm';
+import { Payment } from "../../payment/entities/payment.entity.js";
 
 @Entity("Bills")
 export class Bills{
@@ -74,5 +75,11 @@ export class Bills{
         name: 'orderId'
     })
     order: Relation<Orders>
+
+    @OneToMany(()=>Payment, (payment)=>payment.bill)
+    payment: Relation<Payment[]>
+
+
+    
 
 }

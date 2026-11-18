@@ -38,7 +38,7 @@ export class ProductCatagory {
 
 
   @OneToMany(()=>Products, (products)=>products.productCategory)
-  product: Relation<Products>
+  product: Relation<Products[]>
 
 
   @CreateDateColumn()
