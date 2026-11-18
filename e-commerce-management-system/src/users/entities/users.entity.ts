@@ -2,6 +2,7 @@ import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToO
 import type { Relation } from 'typeorm';
 import { Roles } from '../../roles/entities/roles.entity.js';
 import { Address } from '../../address/entities/address.entity.js';
+import { Orders } from '../../orders/entities/order.entity.js';
 @Entity("Users")
 export class Users{
 
@@ -48,6 +49,11 @@ export class Users{
 
     @OneToMany(()=>Address, (address)=> address.user)
     address: Relation<Address>[]
+
+    @OneToMany(()=>Orders, (orders)=>orders.users)
+    orders: Relation<Orders[]>;
+
+    
 
 
 

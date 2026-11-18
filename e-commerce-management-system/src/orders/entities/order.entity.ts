@@ -1,6 +1,8 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { OrderItems } from "../../orderitems/entities/orderitems.entity.js";
 import type { Relation } from 'typeorm';
+import { Users } from "../../users/entities/users.entity.js";
+import { Delete } from '@nestjs/common';
 
 export enum OrderStatus {
     PENDING = "pending",
@@ -38,12 +40,25 @@ export class Orders{
     Total:number;
 
 
-
     @Column()
     address:string;
 
-    @OneToMany(() => OrderItems, (orderItem) => orderItem.order)
+    @OneToMany(() => OrderItems, (orderItem) => orderItem.order,{
+        nullable: false,
+        onDelete: "CASCADE"
+    })
     orderItems: Relation<OrderItems[]>;
+    
+
+
+    
+    @ManyToOne(()=> Users, (users)=> users.orders)
+    @JoinColumn({
+        name: 'userId'
+    })
+    users: Relation<Users>
+
+
 
     
 }
