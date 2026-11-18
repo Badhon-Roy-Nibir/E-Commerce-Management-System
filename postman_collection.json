@@ -1,0 +1,17 @@
+{
+  "info": {
+    "name": "Cart and CartItem API - No JWT",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [{ "key": "baseUrl", "value": "http://localhost:3000" }],
+  "item": [
+    { "name": "Create Cart", "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "body": {"mode":"raw","raw":"{\n  \"userId\": 1\n}","options":{"raw":{"language":"json"}}}, "url": "{{baseUrl}}/carts" } },
+    { "name": "Get Cart By User", "request": { "method": "GET", "url": "{{baseUrl}}/carts/user/1" } },
+    { "name": "Get All Carts", "request": { "method": "GET", "url": "{{baseUrl}}/carts" } },
+    { "name": "Add Cart Item", "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "body": {"mode":"raw","raw":"{\n  \"userId\": 1,\n  \"productId\": 3,\n  \"quantity\": 2\n}","options":{"raw":{"language":"json"}}}, "url": "{{baseUrl}}/cart-items" } },
+    { "name": "Get Cart Items", "request": { "method": "GET", "url": "{{baseUrl}}/cart-items/user/1" } },
+    { "name": "Update Cart Item", "request": { "method": "PATCH", "header": [{"key":"Content-Type","value":"application/json"}], "body": {"mode":"raw","raw":"{\n  \"quantity\": 4\n}","options":{"raw":{"language":"json"}}}, "url": "{{baseUrl}}/cart-items/1" } },
+    { "name": "Remove Cart Item", "request": { "method": "DELETE", "url": "{{baseUrl}}/cart-items/1" } },
+    { "name": "Clear Cart", "request": { "method": "DELETE", "url": "{{baseUrl}}/cart-items/user/1/clear" } }
+  ]
+}
