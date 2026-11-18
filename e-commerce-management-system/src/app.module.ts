@@ -12,6 +12,8 @@ import { MailerModule } from './mailer/mailer.module.js';
 import { ProductsModule } from './products/products.module.js';
 import { OrderitemsModule } from './orderitems/orderitems.module.js';
 import { OrdersModule } from './orders/orders.module.js';
+import { CartModule } from './cart/cart.module.js';
+import { CartitemsModule } from './cartitems/cartitems.module.js';
 
 @Module({
   imports: [UsersModule, RolesModule,
@@ -31,7 +33,7 @@ import { OrdersModule } from './orders/orders.module.js';
         autoLoadEntities: true,
       })
       
-  }), AddressModule, AuthModule, BillsModule, MailerModule, ProductsModule, OrderitemsModule, OrdersModule],
+  }), AddressModule, AuthModule, BillsModule, MailerModule, ProductsModule, OrderitemsModule, OrdersModule, CartModule, CartitemsModule],
   controllers: [AppController],
   providers: [AppService],
 })
