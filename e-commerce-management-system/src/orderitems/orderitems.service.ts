@@ -131,15 +131,12 @@ async partiallyupdateOrderItem(id: number,item: PartialOrderItemDto): Promise<Ob
                 product: true
             },
         });
-
         if (oldItem) {
-
             let product = await this.productsRepo.findOne({
                 where: {
                     productId: oldItem.product.productId
                 },               
             });
-
             if (item.productId !== undefined) {
 
                 const newProduct = await this.productsRepo.findOne({
@@ -147,7 +144,6 @@ async partiallyupdateOrderItem(id: number,item: PartialOrderItemDto): Promise<Ob
                         productId: item.productId
                     }
                 });
-
                 if (!newProduct) {
                     return `Product with ID ${item.productId} not found`;
                 }
@@ -156,10 +152,11 @@ async partiallyupdateOrderItem(id: number,item: PartialOrderItemDto): Promise<Ob
             }
             if (!product) {
                 return 'Product not found';
-}
-
-            const quantity = item.quantity !== undefined ? item.quantity : oldItem.quantity;
-
+        }
+            let quantity = oldItem.quantity;
+            if (item.quantity !== undefined) {
+                quantity = item.quantity;
+            }
             const lineTotal = Number(product.price) * quantity;
 
             oldItem.productName = product.name;
@@ -177,9 +174,10 @@ async partiallyupdateOrderItem(id: number,item: PartialOrderItemDto): Promise<Ob
                     }
                 }
             });
-
-            const subTotal = allItems.reduce((sum, currentItem) => sum + Number(currentItem.lineTotal),0);
-
+            let subTotal = 0;
+            for (const item of allItems) {
+                subTotal = subTotal + Number(item.lineTotal);
+            }
             const shippingFee = Number(oldItem.order.shippingFee);
             const discount = Number(oldItem.order.discount);
 
@@ -192,7 +190,6 @@ async partiallyupdateOrderItem(id: number,item: PartialOrderItemDto): Promise<Ob
                     Total: total
                 }
             );
-
             return {
                 message: `Order item with ID ${id} updated successfully`,
                 data: {
