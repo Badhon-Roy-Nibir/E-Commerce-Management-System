@@ -5,7 +5,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
+  OneToMany,
 } from 'typeorm';
+import { Products } from '../../products/entities/products.entity.js';
+import type { Relation } from 'typeorm';
 
 @Entity('product_categories')
 export class ProductCatagory {
@@ -31,6 +34,12 @@ export class ProductCatagory {
     default: true,
   })
   isActive: boolean;
+
+
+
+  @OneToMany(()=>Products, (products)=>products.productCategory)
+  product: Relation<Products>
+
 
   @CreateDateColumn()
   createdDate: Date;

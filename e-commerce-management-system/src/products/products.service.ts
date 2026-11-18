@@ -109,8 +109,10 @@ export class ProductsService {
                         name:true,
                         price:true,
                         stockQuantity:true,
-                        categoryId:true
 
+                    },
+                    relations: {
+                        productCategory: true,
                     }
                 });
                 return {
@@ -144,8 +146,10 @@ async replaceProduct(id: number,product: UpdateProductDto): Promise<Object | str
                         name:true,
                         price:true,
                         stockQuantity:true,
-                        categoryId:true
 
+                    },
+                    relations: {
+                        productCategory: true
                     }
                 });
                 return {

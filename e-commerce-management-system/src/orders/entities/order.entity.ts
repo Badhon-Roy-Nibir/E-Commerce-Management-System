@@ -1,7 +1,8 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { OrderItems } from "../../orderitems/entities/orderitems.entity.js";
 import type { Relation } from 'typeorm';
 import { Users } from "../../users/entities/users.entity.js";
+import { Bills } from "../../bills/entities/bills.entity.js";
 
 
 
@@ -61,6 +62,10 @@ export class Orders{
         name: 'userId'
     })
     users: Relation<Users>
+
+
+    @OneToOne(()=>Bills, (bill)=>bill.order)
+    bill: Relation<Bills>
 
 
 

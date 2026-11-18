@@ -3,6 +3,7 @@ import type { Relation } from 'typeorm';
 import { Roles } from '../../roles/entities/roles.entity.js';
 import { Address } from '../../address/entities/address.entity.js';
 import { Orders } from '../../orders/entities/order.entity.js';
+import { Cart } from '../../cart/entities/cart.entity.js';
 @Entity("Users")
 export class Users{
 
@@ -52,6 +53,10 @@ export class Users{
 
     @OneToMany(()=>Orders, (orders)=>orders.users)
     orders: Relation<Orders[]>;
+
+
+    @OneToOne(()=>Cart, (carts)=> carts.user)
+    carts: Relation<Cart>
 
     
 

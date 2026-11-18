@@ -1,4 +1,6 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Orders } from "../../orders/entities/order.entity.js";
+import type { Relation } from 'typeorm';
 
 @Entity("Bills")
 export class Bills{
@@ -66,5 +68,11 @@ export class Bills{
         unique: true
     })
     orderId: number;
+
+    @OneToOne(()=> Orders, (orders)=>orders.bill)
+    @JoinColumn({
+        name: 'orderId'
+    })
+    order: Relation<Orders>
 
 }

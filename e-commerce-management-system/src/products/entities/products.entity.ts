@@ -1,6 +1,7 @@
-import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { OrderItems } from "../../orderitems/entities/orderitems.entity.js";
 import type { Relation } from 'typeorm';
+import { ProductCatagory } from "../../product-category/entities/product-category.entity.js";
 
 
 @Entity("products")
@@ -25,6 +26,15 @@ export class Products{
     })
 
     stockQuantity:number;
+
+
+
+    @ManyToOne(()=>ProductCatagory, (productCategory)=>productCategory.product)
+    @JoinColumn({
+        name: "categoryId"
+    })
+    productCategory: Relation<ProductCatagory>
+
     
     @CreateDateColumn()
     createdAt:Date;
@@ -35,8 +45,6 @@ export class Products{
     @DeleteDateColumn()
     deletedAt:Date;
 
-    @Column()
-    categoryId:number;
 
     @OneToMany(() => OrderItems, (orderItem) => orderItem.product)
     orderItems: Relation<OrderItems>[];
