@@ -1,6 +1,7 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { OrderItems } from "../../orderitems/entities/orderitems.entity.js";
 import type { Relation } from 'typeorm';
+import { Users } from "../../users/entities/users.entity.js";
 
 
 

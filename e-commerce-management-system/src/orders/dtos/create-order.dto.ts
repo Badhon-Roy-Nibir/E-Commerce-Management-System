@@ -5,7 +5,8 @@ import {
     IsString,
     IsPositive,
     ValidateNested,
-    Min
+    Min,
+    ArrayNotEmpty
 } from "class-validator";
 
 import { Type } from "class-transformer";
