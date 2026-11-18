@@ -1,6 +1,6 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Query } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ILike, Repository } from 'typeorm';
 import { Roles } from './entities/roles.entity.js';
 import { CreateRolesDto } from './dtos/create-roles.dto.js';
 import { UpdateRolesDto } from './dtos/update-roles.dto.js';
@@ -126,6 +126,29 @@ export class RolesService {
         }catch{
             throw new BadRequestException('Roles not found');
         }
+    }
+    async searchRoles(keyword: string): Promise<object>{
+        try{
+                const role = await this.rolesRepo.find({
+                where: {
+                    name: ILike(`%${keyword}`)
+                }
+            });
+            if(role.length > 0){
+                return {
+                    data: role
+                }
+            }else{
+                return {
+                    message: `Role name ${keyword} not found!`
+                }
+            }
+
+        }catch{
+            throw new BadRequestException("Role Invalid!!");
+        }
+        
+
     }
 
 

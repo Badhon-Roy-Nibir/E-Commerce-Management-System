@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { RolesService } from './roles.service.js';
 import { CreateRolesDto } from './dtos/create-roles.dto.js';
 import { UpdateRolesDto } from './dtos/update-roles.dto.js';
@@ -39,6 +39,13 @@ export class RolesController {
   deleteRole(@Param("id", ParseIntPipe) id: number){
 
     return this.rolesService.deleteRole(id);
+
+  }
+
+  @Get("searchRoles")
+  searchRoles(@Query("keyword") keyword: string): Promise<object>{
+    return this.rolesService.searchRoles(keyword);
+
 
   }
 
