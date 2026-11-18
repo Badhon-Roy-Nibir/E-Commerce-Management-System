@@ -10,6 +10,7 @@ export class OrderItems {
     @PrimaryGeneratedColumn()
     orderItemId: number;
    
+<<<<<<< HEAD
     @Column()
     productName: string;
 
@@ -20,6 +21,32 @@ export class OrderItems {
     unitPrice: number;
 
     @Column({ type: 'decimal', precision: 10, scale: 2 })
+=======
+    @Column({
+      type:'varchar',
+      length:100
+    })
+    productName: string;
+
+    @Column({
+      default:0
+    
+    })
+    quantity: number;
+
+    @Column({
+      type: 'decimal', 
+      precision: 10, 
+      scale: 2
+    })
+    unitPrice: number;
+
+    @Column({
+      type: 'decimal', 
+      precision: 10, 
+      scale: 2
+    })
+>>>>>>> origin/Anima
     lineTotal: number;
 
 
@@ -30,6 +57,7 @@ export class OrderItems {
      
     @JoinColumn({ name: 'productId' })
     product: Relation<Products> ;
+<<<<<<< HEAD
  
 
       @ManyToOne(() => Orders, (order) => order.orderItems, {
@@ -38,6 +66,18 @@ export class OrderItems {
       })
       @JoinColumn({ name: 'orderId' })
       order: Relation<Orders>;  
+=======
+    
+    @ManyToOne(() => Orders, (order) => order.orderItems, {
+        nullable: false,
+        onDelete: 'CASCADE'
+    })
+    @JoinColumn({ name: 'orderId' })
+    order: Relation<Orders>;
+ 
+
+      
+>>>>>>> origin/Anima
 
     
 }

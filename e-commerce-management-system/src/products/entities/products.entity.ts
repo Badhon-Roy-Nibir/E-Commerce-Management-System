@@ -9,6 +9,7 @@ export class Products{
     @PrimaryGeneratedColumn()
     productId:number;
 
+<<<<<<< HEAD
     @Column()
     name:string;
 
@@ -16,6 +17,22 @@ export class Products{
     price:number;
 
     @Column()
+=======
+    @Column({
+        type:'varchar',
+        length:100
+    })
+    name:string;
+
+    @Column({
+        type:'decimal',precision:10,scale:2
+    })
+    price:number;
+
+    @Column({
+        default:0
+    })
+>>>>>>> origin/Anima
     stockQuantity:number;
     
     @CreateDateColumn()

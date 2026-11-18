@@ -1,10 +1,12 @@
 import { Type } from "class-transformer";
-import { IsInt, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, Min } from "class-validator";
+import { IsInt, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, MaxLength, Min, MinLength } from "class-validator";
 
 export class CreateProductDto{
 
     @IsString()
     @IsNotEmpty()
+    @MinLength(5)
+    @MaxLength(100)
     name:string;
 
     @IsNumber()

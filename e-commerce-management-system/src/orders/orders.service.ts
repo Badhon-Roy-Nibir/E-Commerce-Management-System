@@ -4,7 +4,7 @@ import { OrderItems } from '../orderitems/entities/orderitems.entity.js';
 import { Repository } from 'typeorm';
 import { Products } from '../products/entities/products.entity.js';
 import { CreateOrderDto } from './dtos/create-order.dto.js';
-import { Orders, OrderStatus } from './entities/order.entity.js';
+import { Orders } from './entities/order.entity.js';
 import { PartialUpdateOrderdto } from './dtos/partial-update-order.dto.js';
 
 @Injectable()
@@ -27,13 +27,11 @@ async createOrder(order: CreateOrderDto): Promise< Object> {
                 productId: item.productId
             }
         });
-
         if (!product) {
            return `Product with ID ${item.productId} not found`;
         }
 
         const lineTotal = Number(product.price) * item.quantity;
-
         subTotal += lineTotal;
 
         const orderItem = this.orderItemsRepo.create({
@@ -46,14 +44,12 @@ async createOrder(order: CreateOrderDto): Promise< Object> {
 
         orderItems.push(orderItem);
     }
-
     const shippingFee = Number(order.shippingFee);
     const discount = Number(order.discount);
 
     const total = subTotal + shippingFee - discount;
 
     const or = this.ordersRepo.create({
-        status: OrderStatus.PENDING,
         shippingFee: shippingFee,
         discount: discount,
         subTotal: subTotal,
@@ -65,7 +61,6 @@ async createOrder(order: CreateOrderDto): Promise< Object> {
     for (const item of orderItems) {
         item.order = savedOrder;
     }
-
     await this.orderItemsRepo.save(orderItems);
 
     const result = await this.ordersRepo.findOne({
@@ -141,7 +136,8 @@ async getOrderById(id: number): Promise<Object> {
                 Total: true,
                 address: true,
                 orderItems: {
-                    orderItemId: true
+                    orderItemId: true,
+                    productName:true,
                 }
             },
             relations: {

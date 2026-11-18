@@ -5,8 +5,7 @@ import {
     IsString,
     IsPositive,
     ValidateNested,
-    Min,
-    ArrayNotEmpty
+    Min
 } from "class-validator";
 
 import { Type } from "class-transformer";
@@ -15,8 +14,10 @@ import { CreateOrderItemDto } from "../../orderitems/dtos/create-orderitem.dto.j
 
 export class CreateOrderDto {
 
+    
+
     @IsNumber()
-    @Min(0)
+    @IsPositive()
     @Type(() => Number)
     shippingFee: number;
 
@@ -29,12 +30,14 @@ export class CreateOrderDto {
     @IsNotEmpty()
     address: string;
 
+    
     @IsArray()
     @ArrayNotEmpty()
-    @ValidateNested({ each: true })
+    @ValidateNested({
+        each: true
+    })
     @Type(() => CreateOrderItemDto)
     orderItems: CreateOrderItemDto[];
-
 
     @IsNotEmpty({
         message: "userId cannot be empty"

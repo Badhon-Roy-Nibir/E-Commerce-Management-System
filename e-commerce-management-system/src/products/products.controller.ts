@@ -5,16 +5,13 @@ import { Products } from './entities/products.entity.js';
 import { PartialUpdateProductdto } from './dtos/partial-update-product.dto.js';
 import { UpdateProductDto } from './dtos/update-product.dto.js';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { Roles } from '../auth/roles/roles/roles.decorator.js';
 
-
+@ApiTags('Products')
+@ApiBearerAuth()
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
   
-  @ApiTags('Products')
-  @ApiBearerAuth()
-  @Roles("Admin" , "Manager")
   @Post('create-product')
   async createProduct(@Body() product: CreateProductDto): Promise<Object>{
     return await this.productsService.createProduct(product);
@@ -25,7 +22,6 @@ export class ProductsController {
     return await this.productsService.findAllProducts();
   }
 
-
   @Get('findOne/:id')
   async findOneProduct(@Param('id') id: number): Promise<Products | string> {
     return await this.productsService.findOneProduct(id);
@@ -35,25 +31,17 @@ export class ProductsController {
   async searchProductByName(@Query('name') name: string): Promise<Object | string> {
     return await this.productsService.searchProductByName(name);
   }
-  @ApiTags('Products')
-  @ApiBearerAuth()
-  @Roles("Admin" , "Manager")
+
   @Patch(':id')
   async updateProductPartially(@Body() product:PartialUpdateProductdto,@Param('id',ParseIntPipe) id:number,):Promise<Object | string>{
     return await this.productsService.updateProduct(id,product);
   }
 
-  @ApiTags('Products')
-  @ApiBearerAuth()
-  @Roles("Admin" , "Manager")
   @Put(':id')
   async replaceProduct(@Body() product:UpdateProductDto,@Param('id',ParseIntPipe) id:number,):Promise<Object | string>{
     return await this.productsService.updateProduct(id,product);
   }
 
-  @ApiTags('Products')
-  @ApiBearerAuth()
-  @Roles("Admin" , "Manager")
   @Delete(':id')
   async deleteProductByIdSoft(@Param('id', ParseIntPipe) id: number): Promise<string> {
     return await this.productsService.deleteproductByIdSoft(id);
