@@ -9,13 +9,20 @@ export class Products{
     @PrimaryGeneratedColumn()
     productId:number;
 
-    @Column()
+    @Column({
+        type:'varchar',
+        length:100
+    })
     name:string;
 
-    @Column()
+    @Column({
+        type:'decimal',precision:10,scale:2
+    })
     price:number;
 
-    @Column()
+    @Column({
+        default:0
+    })
     stockQuantity:number;
     
     @CreateDateColumn()

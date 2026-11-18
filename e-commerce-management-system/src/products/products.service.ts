@@ -12,11 +12,11 @@ export class ProductsService {
 
     async createProduct(product: CreateProductDto): Promise<Object>{
         try{
-            const pro = await this.productsRepo.create(product);
+            const pro = this.productsRepo.create(product);
             const saveProduct = await this.productsRepo.save(pro);
             return{
                 message: 'Product Created successfully',
-                data: saveProduct,
+                data: saveProduct
             }
 
         }catch{
@@ -50,7 +50,13 @@ export class ProductsService {
             const pro = await this.productsRepo.findOne({
                 where: { 
                     productId: id
-                },
+                },select:{
+                    name:true,
+                    price:true,
+                    stockQuantity:true,
+                    createdAt:true,
+                    updatedAt:true
+                }
             });
             if(!pro){
                 return `Product with ID ${id} is not found`;
@@ -67,13 +73,16 @@ export class ProductsService {
         const pro = await this.productsRepo.find({
             where: {
                 name: Like(`%${name}%`)
+            },select:{
+                name:true,
+                price:true,
+                stockQuantity:true,
             }
         });
 
         if (pro.length > 0) {
             return {
                 message: `Products matching "${name}" retrieved successfully`,
-                count: pro.length,
                 data: pro
             };
         } else {
@@ -92,7 +101,18 @@ export class ProductsService {
             const res = (await this.productsRepo.update(id, product)).affected;
 
             if (res != null && res > 0) {
-                const updatedProduct = await this.productsRepo.findOne({where: { productId: id }});
+                const updatedProduct = await this.productsRepo.findOne({
+                    where: { 
+                        productId: id 
+                    },select:{
+                        productId:true,
+                        name:true,
+                        price:true,
+                        stockQuantity:true,
+                        categoryId:true
+
+                    }
+                });
                 return {
                     message: `Product with ID ${id} updated successfully`,
                     data: updatedProduct!
@@ -116,7 +136,18 @@ async replaceProduct(id: number,product: UpdateProductDto): Promise<Object | str
             const res = (await this.productsRepo.update(id, product)).affected;
 
             if (res != null && res > 0) {
-                const replaceProduct = await this.productsRepo.findOne({where: { productId: id }});
+                const replaceProduct = await this.productsRepo.findOne({
+                    where: { 
+                        productId: id 
+                    },select:{
+                        productId:true,
+                        name:true,
+                        price:true,
+                        stockQuantity:true,
+                        categoryId:true
+
+                    }
+                });
                 return {
                     message: `Product with ID ${id} replaced successfully`,
                     data: replaceProduct!

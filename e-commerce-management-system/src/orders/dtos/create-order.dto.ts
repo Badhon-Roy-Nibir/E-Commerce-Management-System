@@ -14,6 +14,8 @@ import { CreateOrderItemDto } from "../../orderitems/dtos/create-orderitem.dto.j
 
 export class CreateOrderDto {
 
+    
+
     @IsNumber()
     @IsPositive()
     @Type(() => Number)
@@ -29,7 +31,9 @@ export class CreateOrderDto {
     address: string;
 
     @IsArray()
-    @ValidateNested({ each: true })
+    @ValidateNested({
+        each: true
+    })
     @Type(() => CreateOrderItemDto)
     orderItems: CreateOrderItemDto[];
 }

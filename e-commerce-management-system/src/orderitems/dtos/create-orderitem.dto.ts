@@ -13,5 +13,4 @@ export class CreateOrderItemDto {
     @Type(() => Number)
     quantity: number;
 
-   
 }

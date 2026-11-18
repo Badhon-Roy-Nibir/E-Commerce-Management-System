@@ -5,9 +5,13 @@ import { Type } from "class-transformer";
 import { PartialOrderItemDto } from "../../orderitems/dtos/partial-update-orderitem.dto.js";
 
 export class PartialUpdateOrderdto extends PartialType (OmitType(CreateOrderDto, ['orderItems'] as const)){
+    
+    
     @IsOptional()
     @IsArray()
-    @ValidateNested({ each: true })
+    @ValidateNested({
+        each: true
+    })
     @Type(() => PartialOrderItemDto)
     orderItems: PartialOrderItemDto[];
 

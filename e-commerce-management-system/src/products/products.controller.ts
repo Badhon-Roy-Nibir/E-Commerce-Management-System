@@ -22,7 +22,7 @@ export class ProductsController {
     return await this.productsService.findAllProducts();
   }
 
-   @Get('findOne/:id')
+  @Get('findOne/:id')
   async findOneProduct(@Param('id') id: number): Promise<Products | string> {
     return await this.productsService.findOneProduct(id);
   }
