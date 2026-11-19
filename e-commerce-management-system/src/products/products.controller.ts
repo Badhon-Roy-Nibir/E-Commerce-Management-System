@@ -5,17 +5,20 @@ import { Products } from './entities/products.entity.js';
 import { PartialUpdateProductdto } from './dtos/partial-update-product.dto.js';
 import { UpdateProductDto } from './dtos/update-product.dto.js';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Roles } from '../auth/roles/roles/roles.decorator.js';
 
 @ApiTags('Products')
-@ApiBearerAuth()
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
   
+  @ApiBearerAuth()
+  @Roles("Admin")
   @Post('create-product')
   async createProduct(@Body() product: CreateProductDto): Promise<Object>{
     return await this.productsService.createProduct(product);
   }
+
 
   @Get('all-product')
   async findProducts(){
@@ -32,16 +35,22 @@ export class ProductsController {
     return await this.productsService.searchProductByName(name);
   }
 
+  @ApiBearerAuth()
+  @Roles("Manager", "Admin")
   @Patch(':id')
   async updateProductPartially(@Body() product:PartialUpdateProductdto,@Param('id',ParseIntPipe) id:number,):Promise<Object | string>{
     return await this.productsService.updateProduct(id,product);
   }
 
+  @ApiBearerAuth()
+  @Roles("Manager", "Admin")
   @Put(':id')
   async replaceProduct(@Body() product:UpdateProductDto,@Param('id',ParseIntPipe) id:number,):Promise<Object | string>{
     return await this.productsService.updateProduct(id,product);
   }
 
+  @ApiBearerAuth()
+  @Roles("Manager", "Admin")
   @Delete(':id')
   async deleteProductByIdSoft(@Param('id', ParseIntPipe) id: number): Promise<string> {
     return await this.productsService.deleteproductByIdSoft(id);
