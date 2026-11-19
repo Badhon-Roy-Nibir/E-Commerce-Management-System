@@ -42,7 +42,8 @@ export class AddressService {
                     message: "Adddress not Created!"
                 }
             }
-            }catch{
+            }catch(error){
+                console.log(error)
                 throw new BadRequestException("Address not found!");
 
             }

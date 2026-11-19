@@ -16,20 +16,20 @@ import { Roles } from '../auth/roles/roles/roles.decorator.js';
 export class AddressController {
   constructor(private readonly addressService: AddressService) {}
 
-  @Roles("Customer")
+  @Roles("Customer", "Admin", "Manager")
   @Post("Create-address")
   createAddresss(@Body() add: CreateAddressDto): Promise<object>{
     return this.addressService.createAddress(add);
 
   }
   
-  @Roles("Customer")
+  @Roles("Customer", "Admin", "Manager")
   @Patch("Update-address/:id")
   updateAddress(@Param('id', ParseIntPipe) id: number,@Body() add: UpdateAddressDto ): Promise<object>{
     return this.addressService.updateAddress(id, add);
 
   }
-  @Roles("Customer")
+  @Roles("Customer", "Admin", "Manager")
   @Delete("delete-address/:id")
   deleteAddress(@Param('id',ParseIntPipe) id: number): Promise<object>{
     return this.addressService.deleteAddress(id);

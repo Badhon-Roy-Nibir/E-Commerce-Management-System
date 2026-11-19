@@ -34,7 +34,8 @@ export class Users{
     password: string; 
 
     @Column({
-        type: "boolean"
+        type: "boolean",
+        default: true
     })
     isActive: boolean;
 
@@ -42,7 +43,7 @@ export class Users{
 
     @ManyToOne(() => Roles, (role) => role.user,{
         nullable: false,
-        onDelete: 'CASCADE'
+        onDelete: 'CASCADE',
     
     })
     @JoinColumn({ name: "roleId"})

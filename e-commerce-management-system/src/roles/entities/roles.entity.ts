@@ -18,7 +18,6 @@ export class Roles{
 
     @Column({
         type: "varchar",
-        default: 4
     })
     description: string;
 

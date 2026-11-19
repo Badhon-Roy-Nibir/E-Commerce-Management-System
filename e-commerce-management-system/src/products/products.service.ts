@@ -32,6 +32,9 @@ export class ProductsService {
                     name:true,
                     price:true,
                     stockQuantity:true,
+                },
+                relations: {
+                    productCategory: true,
                 }
             });
         return{

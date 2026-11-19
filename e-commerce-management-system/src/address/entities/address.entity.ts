@@ -20,7 +20,7 @@ export class Address{
     country: string;
 
     @Column({
-        type: 'varchar'
+        type: 'varchar',
     })
     phone: string; 
 
@@ -31,7 +31,8 @@ export class Address{
     line1: string;
 
     @Column({
-        type: 'boolean'
+        type: 'boolean',
+        default: true
     })
     isDefault: boolean;
 

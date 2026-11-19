@@ -192,9 +192,20 @@ async PartiallyupdateOrder(id: number,order: PartialUpdateOrderdto): Promise<Obj
                     if (!product) {
                         return `Product not found`;
                     }
-                    const quantity = itemData.quantity !== undefined ? itemData.quantity : item.quantity;
-                    const unitPrice = itemData.productId !== undefined ? Number(product.price) : Number(item.unitPrice);
 
+                    let quantity: number;
+                    let unitPrice: number;
+                    if (itemData.quantity !== undefined) {
+                        quantity = itemData.quantity;
+                    } else {
+                        quantity = item.quantity;
+                    }
+                    if (itemData.productId !== undefined) {
+                        unitPrice = Number(product.price);
+                    } else {
+                        unitPrice = Number(item.unitPrice);
+                    } 
+                                      
                     item.product = product;
                     item.productName = product.name;
                     item.quantity = quantity;
@@ -212,7 +223,10 @@ async PartiallyupdateOrder(id: number,order: PartialUpdateOrderdto): Promise<Obj
                 }
             });
 
-            const subTotal = allOrderItems.reduce((sum, item) => sum + Number(item.lineTotal),0 );
+            let subTotal = 0;
+            for (const item of allOrderItems) {
+                subTotal = subTotal + Number(item.lineTotal);
+            }
             const shippingFee = order.shippingFee !== undefined ? Number(order.shippingFee) : Number(or.shippingFee);
             const discount = order.discount !== undefined ? Number(order.discount) : Number(or.discount);
 
